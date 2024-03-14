@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
 const App = () => {
   const [password, setPassword] = useState("");
@@ -29,7 +29,15 @@ const App = () => {
 
   useEffect(() => {
     generatePassword();
+    inputRef?.current?.blur();
   }, [length, isNumberAllowed, isCharAllowed]);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const onCopy = () => {
+    window.navigator.clipboard.writeText(password);
+    inputRef?.current?.select();
+  };
 
   return (
     <div className="h-screen flex justify-center bg-black/90">
@@ -47,8 +55,12 @@ const App = () => {
             className="outline-none px-3 py-2 w-[24rem]"
             placeholder="Password"
             value={password}
+            ref={inputRef}
           />
-          <button className="px-3 bg-orange-500 font-bold rounded-tr-xl">
+          <button
+            className="px-3 bg-orange-500 font-bold rounded-tr-xl"
+            onClick={onCopy}
+          >
             Copy
           </button>
         </div>
@@ -72,12 +84,12 @@ const App = () => {
               name=""
               id="isNumber"
               defaultChecked={isNumberAllowed}
-              onChange={(e) => setIsNumberAllowed((prev) => !prev)}
+              onChange={() => setIsNumberAllowed((prev) => !prev)}
             />
             <label
               htmlFor="isNumber"
               className="text-white ml-1"
-              onChange={(e) => setIsNumberAllowed((prev) => !prev)}
+              onChange={() => setIsNumberAllowed((prev) => !prev)}
             >
               Numbers
             </label>
