@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { TodoProvider } from "./store";
+import TodoForm from "./components/todo-form";
+import RenderTodo from "./components/render-todo";
 
 const App = () => {
   const [todo, setTodo] = useState([]);
 
   const addTodo = (newTodo) => {
-    setTodo((prev) => [{ id: new Date.now(), ...newTodo }, ...prev]);
+    setTodo((prev) => [
+      { id: Date.now(), completed: false, todo: newTodo },
+      ...prev,
+    ]);
   };
 
   const updateTodo = (updatedTodo, id) => {
     setTodo((prev) =>
-      prev.map((prevTodo) => (prevTodo.id === id ? updateTodo : prevTodo))
+      prev.map((prevTodo) =>
+        prevTodo.id === id ? { ...prevTodo, todo: updatedTodo } : prevTodo
+      )
     );
   };
 
@@ -43,7 +50,16 @@ const App = () => {
     <TodoProvider
       value={{ todo, addTodo, updateTodo, deleteTodo, toggleComplete }}
     >
-      <div className="">hey</div>
+      <div className="flex flex-col items-center mt-12">
+        <TodoForm />
+        <div className="mt-12">
+          {todo.map((t) => (
+            <div key={t.id} className="mt-2">
+              <RenderTodo todo={t} />
+            </div>
+          ))}
+        </div>
+      </div>
     </TodoProvider>
   );
 };
